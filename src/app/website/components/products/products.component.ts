@@ -5,10 +5,10 @@ import {
   Product,
   CreateProductDTO,
   UpdateProductDTO,
-} from '../../models/product.model';
+} from '../../../models/product.model';
 
-import { StoreService } from '../../services/store.service';
-import { ProductsService } from '../../services/products.service';
+import { StoreService } from '../../../services/store.service';
+import { ProductsService } from '../../../services/products.service';
 
 @Component({
   selector: 'app-products',
@@ -16,10 +16,18 @@ import { ProductsService } from '../../services/products.service';
   styleUrls: ['./products.component.scss'],
 })
 export class ProductsComponent implements OnInit {
-  myShoppingCart: Product[] = [];
-  total = 0;
+
   @Input() products: Product[] = [];
   @Output() loadMore = new EventEmitter;
+  //@Input() productId: string | null = null;
+  @Input() set productId( id: string | null ){
+    if (id) {
+      this.onShowDetail(id);
+    }
+  }
+
+  myShoppingCart: Product[] = [];
+  total = 0;
   showProductDetail = false;
   productChosen: Product | null = null;
   statusDetail: 'loading' | 'success' | 'error' | 'init' = 'init';
@@ -44,7 +52,9 @@ export class ProductsComponent implements OnInit {
 
   onShowDetail(id: string) {
     this.statusDetail = 'loading';
-    this.toggleProductDetail();
+  if (!this.showProductDetail) {
+    this.showProductDetail = true;
+  }
     this.productsService.getOne(id).subscribe(
       (data) => {
         this.productChosen = data;
